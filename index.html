@@ -70,7 +70,25 @@
   }
   .hero-frame::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,9,.2) 0%,rgba(10,10,9,.1) 50%,rgba(10,10,9,.95) 100%)}
   @keyframes slowzoom{to{transform:scale(1)}}
-  video.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.75}
+  video.hero-video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.7}
+  .hero-shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,9,.35) 0%,rgba(10,10,9,.15) 45%,rgba(10,10,9,.95) 100%)}
+
+  /* tile video glimpses */
+  .frame video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .5s}
+  .frame video.on{opacity:1}
+  .frame .glimpse{position:absolute;left:12px;bottom:10px;display:flex;align-items:center;gap:6px;font-size:10px;color:var(--fg);background:rgba(0,0,0,.5);backdrop-filter:blur(6px);padding:4px 8px;border-radius:2px;transition:opacity .3s}
+  .frame .glimpse::before{content:"";border-left:6px solid var(--accent);border-top:4px solid transparent;border-bottom:4px solid transparent}
+  .tile:hover .frame .glimpse, .tile.playing .frame .glimpse{opacity:0}
+
+  /* ---------- REELS (vertical) ---------- */
+  .reels{display:grid;grid-auto-flow:column;grid-auto-columns:clamp(200px,22vw,300px);gap:clamp(10px,1.2vw,16px);overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:18px;scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+  .reel{scroll-snap-align:start;cursor:pointer}
+  .reel .phone{position:relative;aspect-ratio:9/16;overflow:hidden;background:#111 center/cover no-repeat;border-radius:14px;border:1px solid var(--line)}
+  .reel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+  .reel .phone::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.7));pointer-events:none}
+  .reel .cap{position:absolute;left:14px;right:14px;bottom:12px;z-index:2}
+  .reel .cap b{display:block;font-family:var(--display);font-weight:400;font-size:24px;text-transform:uppercase;line-height:1;margin-top:4px}
+  .reel .num{position:absolute;top:12px;left:14px;z-index:2}
 
   /* letterbox bars that open on load */
   .bar{position:absolute;left:0;right:0;height:50%;background:#000;z-index:5;transition:height 1.6s cubic-bezier(.77,0,.18,1)}
@@ -274,6 +292,7 @@
   <a href="#top" class="brand">RBS</a>
   <ul>
     <li><a href="#work">Work</a></li>
+    <li><a href="#reels">Reels</a></li>
     <li><a href="#about">About</a></li>
     <li><a href="#festivals">Festivals</a></li>
     <li><a href="#contact">Contact</a></li>
@@ -282,9 +301,9 @@
 
 <!-- ================= HERO ================= -->
 <section class="hero" id="top" style="padding:0">
-  <!-- Replace with a still from the showreel: images/hero.jpg (or uncomment the video below) -->
-  <div class="hero-frame" style="--img:url(images/hero.jpg)"></div>
-  <!-- <video class="hero-video" src="video/showreel-loop.mp4" autoplay muted loop playsinline></video> -->
+  <div class="hero-frame" style="--img:url(media/posters/hero.jpg)"></div>
+  <video class="hero-video" src="media/hero-loop.mp4" poster="media/posters/hero.jpg" autoplay muted loop playsinline></video>
+  <div class="hero-shade"></div>
 
   <div class="bar top"></div>
   <div class="bar bot"></div>
@@ -330,6 +349,15 @@
   <div class="grid" id="grid"></div>
 </section>
 
+<!-- ================= REELS ================= -->
+<section id="reels" style="padding-top:0">
+  <div class="sec-head">
+    <h2>Reels &amp; <em>social</em></h2>
+    <span class="mono muted">Hospitality · Brand · Promo — swipe →</span>
+  </div>
+  <div class="reels" id="reel-list"></div>
+</section>
+
 <!-- ================= ABOUT ================= -->
 <section id="about">
   <div class="sec-head">
@@ -352,7 +380,7 @@
         at Ramee Dream Hotel, Dubai.
       </p>
       <div class="stats">
-        <div><b data-count="15">0</b><span class="mono muted">Films &amp; campaigns</span></div>
+        <div><b data-count="20" data-suffix="+">0</b><span class="mono muted">Films &amp; campaigns</span></div>
         <div><b data-count="8">0</b><span class="mono muted">Festival selections</span></div>
         <div><b data-count="10" data-suffix="+">0</b><span class="mono muted">Years behind the lens</span></div>
       </div>
@@ -436,41 +464,47 @@
 <script>
 /* ------------------------------------------------------------------
    PROJECT DATA — edit here.
-   img:   drop a still into /images with this file name and it appears.
-   video: paste a YouTube/Vimeo embed URL to show a player in the popup.
+   clip:  short muted glimpse in /media/clips (poster in /media/posters).
+   img:   for projects without a clip, drop a still into /images.
+   watch: optional link to the full film (YouTube / Vimeo / Drive).
 ------------------------------------------------------------------- */
 const projects = [
-  { t:"Kerala Bank",           type:"Ad campaign · 8 films",  y:"2024", roles:["dir","dop"], credit:"Director & Cinematographer", w:"w8", img:"keralabank.jpg",
+  { t:"Randu",                 type:"Feature film",           y:"2021", roles:["dop"], credit:"Associate Cinematographer", w:"w8", clip:"randu" },
+  { t:"Kanyaka Talkies",       type:"Feature film · Trailer", y:"",     roles:[], w:"w4", clip:"kanyaka" },
+  { t:"On the Way",            type:"Short film",             y:"2017", roles:["dop"], credit:"Cinematography", w:"w7", clip:"ontheway", fest:"Morocco IFF · Kolkata IFF" },
+  { t:"Lakshmi",               type:"Short film",             y:"2021", roles:["dop"], credit:"Cinematography", w:"w5", clip:"lakshmi", fest:"MIFF · Signs 2022" },
+  { t:"Madanolsavam",          type:"Feature film · Trailer", y:"",     roles:[], w:"w4", clip:"madanolsavam" },
+  { t:"Munnar — Kolukkumalai", type:"Travel film",            y:"",     roles:[], w:"w4", clip:"munnar" },
+  { t:"May",                   type:"Short film",             y:"2017", roles:["dop"], credit:"Cinematography", w:"w4", clip:"may", fest:"Chennai Queer IFF" },
+  { t:"Chai for Director, Pan for Crew", type:"Documentary", y:"2018", roles:["dop"], credit:"Cinematography", w:"w6", clip:"chai", fest:"IDSFFK" },
+  { t:"Pedi",                  type:"Short film",             y:"",     roles:[], w:"w6", clip:"pedi" },
+  { t:"Randam Prathi",         type:"Short film",             y:"2020", roles:["dop"], credit:"Cinematography", w:"w8", clip:"randamprathi", fest:"Contact IFF 2022" },
+  { t:"Kuzhimanthi",           type:"Short film",             y:"",     roles:[], w:"w4", clip:"kuzhimanthi", fest:"IDSFFK" },
+  { t:"The Obscured Profile",  type:"Short film",             y:"",     roles:["dir"], credit:"Director", w:"w5", clip:"obscured", fest:"IDSFFK" },
+  { t:"Big Bang Theory",       type:"Short film",             y:"2016", roles:["dop"], credit:"Cinematography", w:"w7", clip:"bigbang", fest:"IDSFFK" },
+  { t:"Kerala Bank",           type:"Ad campaign · 8 films",  y:"2024", roles:["dir","dop"], credit:"Director & Cinematographer", w:"w4", img:"keralabank.jpg",
     grade:"linear-gradient(135deg,#1c3a36 0%,#0e1a1a 55%,#3a2a14 100%)",
     desc:"An eight-film advertising campaign for Kerala Bank, directed and shot by Ramanunni." },
   { t:"Thanha",                type:"Music video",            y:"2022", roles:["dop","edit"], credit:"Cinematography, DI & Edit", w:"w4", img:"thanha.jpg",
     grade:"radial-gradient(circle at 30% 40%,#6b2a3a,#1a0c14 70%)" },
   { t:"CaCO3",                 type:"Short film",             y:"2022", roles:["dop","edit"], credit:"Cinematography, DI & Edit", w:"w4", img:"caco3.jpg",
     grade:"linear-gradient(160deg,#b9b3a4 0%,#5b5a55 40%,#141414 100%)" },
-  { t:"Randu",                 type:"Feature film",           y:"2021", roles:["dop"], credit:"Associate Cinematographer", w:"w8", img:"randu.jpg",
-    grade:"linear-gradient(120deg,#3a2410 0%,#15100b 60%,#243238 100%)" },
-  { t:"Lakshmi",               type:"Short film",             y:"2021", roles:["dop"], credit:"Cinematography", w:"w5", img:"lakshmi.jpg", fest:"MIFF · Signs 2022",
-    grade:"radial-gradient(circle at 70% 30%,#c9892f,#3d220d 55%,#0c0806 100%)" },
-  { t:"Randam Prathi",         type:"Short film",             y:"2020", roles:["dop"], credit:"Cinematography", w:"w7", img:"randamprathi.jpg", fest:"Contact IFF 2022",
-    grade:"linear-gradient(200deg,#23303f 0%,#0c1118 60%,#2f1d12 100%)" },
-  { t:"Darboni",               type:"Feature trailer",        y:"Upcoming", roles:["edit"], credit:"Trailer Edit", w:"w4", img:"darboni.jpg",
-    grade:"linear-gradient(180deg,#0b0b0b,#2b0f0c 70%,#541a10)" },
-  { t:"Chai for Director, Pan for Crew", type:"Documentary", y:"2018", roles:["dop"], credit:"Cinematography", w:"w8", img:"chai.jpg", fest:"IDSFFK",
-    grade:"linear-gradient(110deg,#5a3b1c 0%,#2a1c10 50%,#0d0a07 100%)" },
-  { t:"Thadiyanum Mudiyanum",  type:"Feature film",           y:"2018", roles:["dop"], credit:"Cinematography", w:"w6", img:"thadiyanum.jpg",
+  { t:"Thadiyanum Mudiyanum",  type:"Feature film",           y:"2018", roles:["dop"], credit:"Cinematography", w:"w4", img:"thadiyanum.jpg",
     grade:"linear-gradient(140deg,#243a22 0%,#0e160d 60%,#3a3218 100%)" },
-  { t:"The Obscured Profile",  type:"Short film",             y:"", roles:["dir"], credit:"Director", w:"w6", img:"obscured.jpg", fest:"IDSFFK",
-    grade:"radial-gradient(circle at 50% 50%,#2e2e36,#0a0a0d 70%)" },
   { t:"Bull’s Eye",            type:"Short film",             y:"2017", roles:["dop"], credit:"Cinematography", w:"w4", img:"bullseye.jpg", fest:"IDSFFK",
     grade:"radial-gradient(circle at 50% 55%,#8a1f18 0%,#2a0c0a 45%,#0a0606 100%)" },
-  { t:"On the Way",            type:"Short film",             y:"2017", roles:["dop"], credit:"Cinematography", w:"w4", img:"ontheway.jpg", fest:"Morocco IFF · Kolkata IFF",
-    grade:"linear-gradient(180deg,#c68a4a 0%,#6e4a2c 35%,#1b1612 100%)" },
-  { t:"May",                   type:"Short film",             y:"2017", roles:["dop"], credit:"Cinematography", w:"w4", img:"may.jpg", fest:"Chennai Queer IFF",
-    grade:"linear-gradient(150deg,#3a2f5c 0%,#1a1430 55%,#5c2a44 100%)" },
-  { t:"Big Bang Theory",       type:"Short film",             y:"2016", roles:["dop"], credit:"Cinematography", w:"w6", img:"bigbang.jpg", fest:"IDSFFK",
-    grade:"radial-gradient(circle at 60% 40%,#e8d9b8 0%,#5a5040 25%,#0c0b09 70%)" },
-  { t:"Universal Edutech",     type:"In-house content",       y:"2021–22", roles:["edit"], credit:"In-house Editor", w:"w6", img:"edutech.jpg",
-    grade:"linear-gradient(135deg,#1d2a33,#0b0f12 70%)" },
+  { t:"Darboni",               type:"Feature trailer",        y:"Upcoming", roles:["edit"], credit:"Trailer Edit", w:"w4", img:"darboni.jpg",
+    grade:"linear-gradient(180deg,#0b0b0b,#2b0f0c 70%,#541a10)" },
+];
+
+const reels = [
+  { t:"Mama Maria",     k:"mamamaria", tag:"Restaurant · Dubai" },
+  { t:"Troy",           k:"troy",      tag:"Nightlife · Dubai" },
+  { t:"Zoloto Re",      k:"zoloto",    tag:"Bar · Dubai" },
+  { t:"Tanatan",        k:"tanatan",   tag:"Intro film" },
+  { t:"Funny Cat",      k:"funnycat",  tag:"Sports bar · Dubai" },
+  { t:"Health Care",    k:"healthcare",tag:"Vijnana Keralam" },
+  { t:"MOU Signing",    k:"mou",       tag:"Vijnana Keralam & NSS" },
 ];
 
 const festivals = [
@@ -488,14 +522,16 @@ const pad = n => String(n).padStart(2,"0");
 
 /* ---- render work grid ---- */
 const grid = document.getElementById("grid");
+const bg = p => p.clip ? `--img:url(media/posters/${p.clip}.jpg);--grade:#111` : `--img:url(images/${p.img});--grade:${p.grade}`;
 grid.innerHTML = projects.map((p,i)=>`
   <article class="tile ${p.w} rv" data-roles="${p.roles.join(" ")}" data-i="${i}" tabindex="0">
     <div class="label mono"><span><b>${pad(i+1)}</b>&nbsp;&nbsp;${p.t}</span><span class="muted">${p.y}</span></div>
     <div class="frame">
-      <div class="pic" style="--img:url(images/${p.img});--grade:${p.grade}"></div>
-      <div class="ph">${p.t}</div>
+      <div class="pic" style="${bg(p)}"></div>
+      ${p.clip?`<video muted loop playsinline preload="none" data-src="media/clips/${p.clip}.mp4"></video>`:`<div class="ph">${p.t}</div>`}
       <div class="tags mono">${p.roles.map(r=>`<em>${roleName[r]}</em>`).join("")}</div>
       ${p.fest?`<div class="laurel mono">✦ Official selection</div>`:""}
+      ${p.clip?`<span class="glimpse mono">Glimpse</span>`:""}
       <span class="tc mono">${p.type}</span>
       <span class="view mono">View ↗</span>
     </div>
@@ -503,11 +539,41 @@ grid.innerHTML = projects.map((p,i)=>`
 
 /* hide placeholder title once a real image loads */
 projects.forEach((p,i)=>{
+  if(p.clip) return;
   const im = new Image();
   im.onload = ()=>{ const ph = grid.querySelector(`[data-i="${i}"] .ph`); if(ph) ph.style.display="none"; };
   im.src = "images/"+p.img;
 });
 (()=>{ const im=new Image(); im.onload=()=>document.querySelector(".portrait .ph").style.display="none"; im.src="images/portrait.jpg"; })();
+
+/* ---- glimpse playback: hover on desktop, in-view on touch ---- */
+function playV(v){ if(!v.src) v.src=v.dataset.src; v.play().then(()=>{ v.classList.add("on"); v.closest(".tile,.reel")?.classList.add("playing"); }).catch(()=>{}); }
+function stopV(v){ v.pause(); v.classList.remove("on"); v.closest(".tile,.reel")?.classList.remove("playing"); }
+const canHover = matchMedia("(hover:hover)").matches;
+if(canHover){
+  grid.querySelectorAll(".tile").forEach(t=>{
+    const v=t.querySelector("video"); if(!v) return;
+    t.addEventListener("mouseenter",()=>playV(v));
+    t.addEventListener("mouseleave",()=>stopV(v));
+  });
+}
+const vio = new IntersectionObserver(es=>es.forEach(e=>{
+  const v=e.target; e.isIntersecting ? playV(v) : stopV(v);
+}),{threshold:.6});
+grid.querySelectorAll("video").forEach(v=>{ if(!canHover) vio.observe(v); });
+
+/* ---- reels ---- */
+const reelList = document.getElementById("reel-list");
+reelList.innerHTML = reels.map((r,i)=>`
+  <article class="reel rv" data-k="${r.k}">
+    <div class="phone" style="background-image:url(media/posters/reel-${r.k}.jpg)">
+      <video muted loop playsinline preload="none" data-src="media/clips/reel-${r.k}.mp4" poster="media/posters/reel-${r.k}.jpg"></video>
+      <span class="num mono">${pad(i+1)}</span>
+      <div class="cap"><span class="mono muted">${r.tag}</span><b>${r.t}</b></div>
+    </div>
+  </article>`).join("");
+reelList.querySelectorAll("video").forEach(v=>vio.observe(v));
+reelList.addEventListener("click",e=>{ const r=e.target.closest(".reel"); if(r) openClip(`media/clips/reel-${r.dataset.k}.mp4`, reels.find(x=>x.k===r.dataset.k).t, true); });
 
 /* ---- filters ---- */
 document.querySelectorAll(".filters button").forEach(b=>b.addEventListener("click",()=>{
@@ -532,41 +598,44 @@ document.getElementById("fest").innerHTML = festivals.map(f=>`
 const modal = document.getElementById("modal"), mbody = document.getElementById("modal-body");
 function openProject(i){
   const p = projects[i];
-  const media = p.video
-    ? `<div class="frame"><iframe src="${p.video}" style="position:absolute;inset:0;width:100%;height:100%;border:0" allow="autoplay; fullscreen" allowfullscreen></iframe></div>`
-    : `<div class="frame"><div class="pic" style="--img:url(images/${p.img});--grade:${p.grade}"></div><div class="ph">${p.t}</div></div>`;
+  const media = p.clip
+    ? `<div class="frame"><video src="media/clips/${p.clip}.mp4" poster="media/posters/${p.clip}.jpg" autoplay muted loop playsinline controls style="opacity:1"></video></div>`
+    : `<div class="frame"><div class="pic" style="${bg(p)}"></div><div class="ph">${p.t}</div></div>`;
   mbody.innerHTML = `
-    <p class="mono muted">${pad(i+1)} / ${pad(projects.length)}</p>
+    <p class="mono muted">${pad(i+1)} / ${pad(projects.length)}${p.clip?" &nbsp;·&nbsp; Glimpse":""}</p>
     <div style="margin-top:14px">${media}</div>
     <h3>${p.t}</h3>
     <div class="credits mono muted">
       <div>Format<b>${p.type}</b></div>
-      <div>Role<b>${p.credit}</b></div>
+      ${p.credit?`<div>Role<b>${p.credit}</b></div>`:""}
       <div>Year<b>${p.y||"—"}</b></div>
       <div>Festivals<b>${p.fest||"—"}</b></div>
     </div>
     ${p.desc?`<p class="desc">${p.desc}</p>`:""}
+    ${p.watch?`<p style="margin-top:28px"><a class="play mono" href="${p.watch}" target="_blank" rel="noopener"><i></i> Watch full film</a></p>`:""}
     <div style="display:flex;justify-content:space-between;margin-top:48px" class="mono">
       <a href="#" data-nav="${(i-1+projects.length)%projects.length}">← Previous</a>
       <a href="#" data-nav="${(i+1)%projects.length}">Next →</a>
     </div>`;
-  modal.classList.add("open"); document.body.style.overflow="hidden"; modal.scrollTop=0;
+  showModal();
 }
-function openReel(){
+function openClip(src, title, vertical){
   mbody.innerHTML = `
-    <p class="mono muted">Showreel</p>
-    <div class="frame" style="margin-top:14px;display:grid;place-items:center;background:#000">
-      <!-- Replace with: <iframe src="https://player.vimeo.com/video/XXXX" ...> -->
-      <p class="mono muted" style="position:relative;text-align:center;padding:20px">Showreel coming soon<br><br>Paste a Vimeo / YouTube embed link here</p>
+    <p class="mono muted">${vertical?"Reel":"Showreel"}</p>
+    <div style="margin-top:14px;${vertical?"max-width:min(420px,100%);margin-inline:auto":""}">
+      <div class="frame" style="${vertical?"aspect-ratio:9/16":"aspect-ratio:16/9"};background:#000">
+        <video src="${src}" autoplay muted loop playsinline controls style="opacity:1;object-fit:contain"></video>
+      </div>
     </div>
-    <h3>Showreel</h3>`;
-  modal.classList.add("open"); document.body.style.overflow="hidden";
+    <h3 style="${vertical?"text-align:center":""}">${title}</h3>`;
+  showModal();
 }
-function closeModal(){ modal.classList.remove("open"); document.body.style.overflow=""; }
+function showModal(){ modal.classList.add("open"); document.body.style.overflow="hidden"; modal.scrollTop=0; }
+function closeModal(){ modal.querySelectorAll("video").forEach(v=>v.pause()); modal.classList.remove("open"); document.body.style.overflow=""; }
 grid.addEventListener("click",e=>{ const t=e.target.closest(".tile"); if(t) openProject(+t.dataset.i); });
 grid.addEventListener("keydown",e=>{ if(e.key==="Enter"){ const t=e.target.closest(".tile"); if(t) openProject(+t.dataset.i);} });
 mbody.addEventListener("click",e=>{ const n=e.target.closest("[data-nav]"); if(n){ e.preventDefault(); openProject(+n.dataset.nav);} });
-document.querySelector("[data-open=reel]").addEventListener("click",e=>{ e.preventDefault(); openReel(); });
+document.querySelector("[data-open=reel]").addEventListener("click",e=>{ e.preventDefault(); openClip("media/showreel.mp4","Showreel"); });
 document.getElementById("close").onclick = closeModal;
 modal.addEventListener("click",e=>{ if(e.target===modal) closeModal(); });
 addEventListener("keydown",e=>{ if(e.key==="Escape") closeModal(); });
