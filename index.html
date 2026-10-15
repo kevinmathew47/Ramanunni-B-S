@@ -51,6 +51,7 @@
     padding:18px var(--gutter);
     mix-blend-mode:difference;
   }
+  header.nav.scrolled{mix-blend-mode:normal;background:rgba(10,10,9,.82);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
   .brand{font-family:var(--display);font-size:22px;letter-spacing:.04em}
   .nav ul{display:flex;gap:28px;list-style:none}
   .nav a{position:relative}
@@ -182,9 +183,18 @@
   .frame .tags em{font-style:normal;background:rgba(0,0,0,.55);backdrop-filter:blur(6px);padding:4px 8px;border-radius:2px;font-size:10px}
   .frame .laurel{position:absolute;top:10px;right:12px;color:var(--accent);font-size:10px}
 
+  /* more credits list */
+  .more{margin-top:56px}
+  .more h3{font-weight:400;margin-bottom:14px}
+  .more ul{list-style:none;border-top:1px solid var(--line)}
+  .more li{display:grid;grid-template-columns:110px 1.4fr 1fr 1fr;gap:16px;align-items:baseline;padding:16px 0;border-bottom:1px solid var(--line);transition:padding .3s,color .3s}
+  .more li:hover{padding-left:12px;color:var(--accent)}
+  .more li b{font-family:var(--display);font-weight:400;font-size:clamp(22px,2.4vw,34px);text-transform:uppercase;line-height:1}
+  @media (max-width:700px){ .more li{grid-template-columns:1fr auto} .more li span:first-child{grid-column:1/-1} .more li span.muted:not(.mono){display:none} }
+
   /* ---------- ABOUT ---------- */
   .about{display:grid;grid-template-columns:5fr 7fr;gap:clamp(32px,6vw,96px);align-items:start}
-  .portrait{position:relative;aspect-ratio:4/5;background:var(--img, none) center/cover no-repeat, linear-gradient(160deg,#2a2016,#0f0d0b 70%);overflow:hidden}
+  .portrait{position:relative;aspect-ratio:4/5;background:var(--img, none) center 30%/cover no-repeat, linear-gradient(160deg,#2a2016,#0f0d0b 70%);overflow:hidden}
   .portrait .ph{position:absolute;inset:0;display:grid;place-items:center;color:rgba(236,231,222,.18);text-align:center}
   .portrait figcaption{position:absolute;left:14px;bottom:12px}
   .about-text .lede{font-family:var(--serif);font-size:clamp(28px,3.4vw,52px);line-height:1.08;letter-spacing:-.01em}
@@ -347,6 +357,10 @@
     </div>
   </div>
   <div class="grid" id="grid"></div>
+  <div class="more rv">
+    <h3 class="mono muted">More credits</h3>
+    <ul id="more"></ul>
+  </div>
 </section>
 
 <!-- ================= REELS ================= -->
@@ -395,8 +409,8 @@
     <span class="mono muted">Disciplines / 02</span>
   </div>
   <div class="disc">
-    <div class="disc-row rv"><span class="mono">01</span><h3>Cinematography</h3><p>Features, short films, documentaries and music videos. Lighting, camera and the look of the film, through to DI.</p></div>
-    <div class="disc-row rv"><span class="mono">02</span><h3>Direction</h3><p>Short-form narrative and commercial work, including an eight-film ad campaign for Kerala Bank.</p></div>
+    <div class="disc-row rv"><span class="mono">01</span><h3>Cinematography</h3><p>DOP on short films, documentaries, music videos and the eight-film Kerala Bank ad campaign; associate cameraman on features Randu and Madanolsavam.</p></div>
+    <div class="disc-row rv"><span class="mono">02</span><h3>Direction</h3><p>Short films and visual stories, from The Obscured Profile to the Munnar–Kolukkumalai travel film, which he also shot.</p></div>
     <div class="disc-row rv"><span class="mono">03</span><h3>Editing</h3><p>Trained editor. Short films, music videos, trailers and in-house content, cut for rhythm and emotion.</p></div>
     <div class="disc-row rv"><span class="mono">04</span><h3>Creative Direction</h3><p>Concept to delivery for brands and hospitality, drawing on design thinking, photography and digital illustration.</p></div>
   </div>
@@ -469,32 +483,29 @@
    watch: optional link to the full film (YouTube / Vimeo / Drive).
 ------------------------------------------------------------------- */
 const projects = [
-  { t:"Randu",                 type:"Feature film",           y:"2021", roles:["dop"], credit:"Associate Cinematographer", w:"w8", clip:"randu" },
-  { t:"Kanyaka Talkies",       type:"Feature film · Trailer", y:"",     roles:[], w:"w4", clip:"kanyaka" },
-  { t:"On the Way",            type:"Short film",             y:"2017", roles:["dop"], credit:"Cinematography", w:"w7", clip:"ontheway", fest:"Morocco IFF · Kolkata IFF" },
-  { t:"Lakshmi",               type:"Short film",             y:"2021", roles:["dop"], credit:"Cinematography", w:"w5", clip:"lakshmi", fest:"MIFF · Signs 2022" },
-  { t:"Madanolsavam",          type:"Feature film · Trailer", y:"",     roles:[], w:"w4", clip:"madanolsavam" },
-  { t:"Munnar — Kolukkumalai", type:"Travel film",            y:"",     roles:[], w:"w4", clip:"munnar" },
-  { t:"May",                   type:"Short film",             y:"2017", roles:["dop"], credit:"Cinematography", w:"w4", clip:"may", fest:"Chennai Queer IFF" },
-  { t:"Chai for Director, Pan for Crew", type:"Documentary", y:"2018", roles:["dop"], credit:"Cinematography", w:"w6", clip:"chai", fest:"IDSFFK" },
-  { t:"Pedi",                  type:"Short film",             y:"",     roles:[], w:"w6", clip:"pedi" },
-  { t:"Randam Prathi",         type:"Short film",             y:"2020", roles:["dop"], credit:"Cinematography", w:"w8", clip:"randamprathi", fest:"Contact IFF 2022" },
+  { t:"Randu",                 type:"Feature film",           y:"2021", roles:["dop"], tags:["Assoc. Camera"], credit:"Associate Cameraman", w:"w8", clip:"randu" },
+  { t:"Kanyaka Talkies",       type:"Feature film",           y:"",     roles:["dop"], credit:"DOP", w:"w4", clip:"kanyaka" },
+  { t:"On the Way",            type:"Short film",             y:"2017", roles:["dop"], credit:"DOP", w:"w7", clip:"ontheway", fest:"Morocco IFF · Kolkata IFF" },
+  { t:"Lakshmi",               type:"Short film",             y:"2021", roles:["dop"], credit:"DOP", w:"w5", clip:"lakshmi", fest:"MIFF · Signs 2022" },
+  { t:"Madanolsavam",          type:"Feature film",           y:"",     roles:["dop"], tags:["Assoc. Camera"], credit:"Associate Cameraman", w:"w4", clip:"madanolsavam" },
+  { t:"Munnar — Kolukkumalai", type:"Travel film",            y:"",     roles:["dir","dop"], credit:"Director & DOP", w:"w4", clip:"munnar" },
+  { t:"May",                   type:"Short film",             y:"2017", roles:["dop"], credit:"DOP", w:"w4", clip:"may", fest:"Chennai Queer IFF" },
+  { t:"Chai for Director, Pan for Crew", type:"Documentary", y:"2018", roles:["dop"], credit:"DOP", w:"w6", clip:"chai", fest:"IDSFFK" },
+  { t:"Pedi",                  type:"Short film",             y:"",     roles:["dop"], credit:"DOP", w:"w6", clip:"pedi" },
+  { t:"Randam Prathi",         type:"Short film",             y:"2020", roles:["dop"], credit:"DOP", w:"w8", clip:"randamprathi", fest:"Contact IFF 2022" },
   { t:"Kuzhimanthi",           type:"Short film",             y:"",     roles:[], w:"w4", clip:"kuzhimanthi", fest:"IDSFFK" },
   { t:"The Obscured Profile",  type:"Short film",             y:"",     roles:["dir"], credit:"Director", w:"w5", clip:"obscured", fest:"IDSFFK" },
-  { t:"Big Bang Theory",       type:"Short film",             y:"2016", roles:["dop"], credit:"Cinematography", w:"w7", clip:"bigbang", fest:"IDSFFK" },
-  { t:"Kerala Bank",           type:"Ad campaign · 8 films",  y:"2024", roles:["dir","dop"], credit:"Director & Cinematographer", w:"w4", img:"keralabank.jpg",
-    grade:"linear-gradient(135deg,#1c3a36 0%,#0e1a1a 55%,#3a2a14 100%)",
-    desc:"An eight-film advertising campaign for Kerala Bank, directed and shot by Ramanunni." },
-  { t:"Thanha",                type:"Music video",            y:"2022", roles:["dop","edit"], credit:"Cinematography, DI & Edit", w:"w4", img:"thanha.jpg",
-    grade:"radial-gradient(circle at 30% 40%,#6b2a3a,#1a0c14 70%)" },
-  { t:"CaCO3",                 type:"Short film",             y:"2022", roles:["dop","edit"], credit:"Cinematography, DI & Edit", w:"w4", img:"caco3.jpg",
-    grade:"linear-gradient(160deg,#b9b3a4 0%,#5b5a55 40%,#141414 100%)" },
-  { t:"Thadiyanum Mudiyanum",  type:"Feature film",           y:"2018", roles:["dop"], credit:"Cinematography", w:"w4", img:"thadiyanum.jpg",
-    grade:"linear-gradient(140deg,#243a22 0%,#0e160d 60%,#3a3218 100%)" },
-  { t:"Bull’s Eye",            type:"Short film",             y:"2017", roles:["dop"], credit:"Cinematography", w:"w4", img:"bullseye.jpg", fest:"IDSFFK",
-    grade:"radial-gradient(circle at 50% 55%,#8a1f18 0%,#2a0c0a 45%,#0a0606 100%)" },
-  { t:"Darboni",               type:"Feature trailer",        y:"Upcoming", roles:["edit"], credit:"Trailer Edit", w:"w4", img:"darboni.jpg",
-    grade:"linear-gradient(180deg,#0b0b0b,#2b0f0c 70%,#541a10)" },
+  { t:"Big Bang Theory",       type:"Short film",             y:"2016", roles:["dop"], credit:"DOP", w:"w7", clip:"bigbang", fest:"IDSFFK" },
+];
+
+/* credits without footage — listed as text under the grid */
+const moreCredits = [
+  { t:"Kerala Bank",          type:"Ad campaign · 8 films", role:"DOP", y:"2024" },
+  { t:"Thanha",               type:"Music video",           role:"DOP, DI & Edit", y:"2022" },
+  { t:"CaCO3",                type:"Short film",            role:"DOP, DI & Edit", y:"2022" },
+  { t:"Thadiyanum Mudiyanum", type:"Feature film",          role:"DOP", y:"2018" },
+  { t:"Bull’s Eye",           type:"Short film · IDSFFK",   role:"DOP", y:"2017" },
+  { t:"Darboni",              type:"Feature film",          role:"Trailer Edit", y:"Upcoming" },
 ];
 
 const reels = [
@@ -529,7 +540,7 @@ grid.innerHTML = projects.map((p,i)=>`
     <div class="frame">
       <div class="pic" style="${bg(p)}"></div>
       ${p.clip?`<video muted loop playsinline preload="none" data-src="media/clips/${p.clip}.mp4"></video>`:`<div class="ph">${p.t}</div>`}
-      <div class="tags mono">${p.roles.map(r=>`<em>${roleName[r]}</em>`).join("")}</div>
+      <div class="tags mono">${(p.tags||p.roles.map(r=>roleName[r])).map(x=>`<em>${x}</em>`).join("")}</div>
       ${p.fest?`<div class="laurel mono">✦ Official selection</div>`:""}
       ${p.clip?`<span class="glimpse mono">Glimpse</span>`:""}
       <span class="tc mono">${p.type}</span>
@@ -584,6 +595,10 @@ document.querySelectorAll(".filters button").forEach(b=>b.addEventListener("clic
     t.classList.toggle("hide", f!=="all" && !t.dataset.roles.split(" ").includes(f));
   });
 }));
+
+/* ---- more credits ---- */
+document.getElementById("more").innerHTML = moreCredits.map(c=>`
+  <li><span class="mono muted">${c.y}</span><b>${c.t}</b><span class="muted">${c.type}</span><span class="mono">${c.role}</span></li>`).join("");
 
 /* ---- festivals ---- */
 const laurel = `<svg class="laurel-ic" viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M14 40c-6-6-8-16-3-26M34 40c6-6 8-16 3-26"/><path d="M11 30c-3 0-5-2-5-4 3 0 5 2 5 4zM10 23c-3-1-4-3-4-5 3 1 4 3 4 5zM12 16c-2-1-3-4-2-6 2 2 3 4 2 6zM37 30c3 0 5-2 5-4-3 0-5 2-5 4zM38 23c3-1 4-3 4-5-3 1-4 3-4 5zM36 16c2-1 3-4 2-6-2 2-3 4-2 6z"/></svg>`;
@@ -667,6 +682,7 @@ const io = new IntersectionObserver(es=>es.forEach(e=>{
 }),{threshold:.12});
 document.querySelectorAll(".rv").forEach(el=>io.observe(el));
 
+addEventListener("scroll",()=>document.querySelector("header.nav").classList.toggle("scrolled",scrollY>innerHeight*.8),{passive:true});
 document.getElementById("yr").textContent = new Date().getFullYear();
 addEventListener("load",()=>setTimeout(()=>document.body.classList.add("loaded"),150));
 </script>
